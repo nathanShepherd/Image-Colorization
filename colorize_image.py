@@ -27,36 +27,37 @@ class NeuralComputer:
         
     def Perceptron(self, tensor):
         #with tf.name_scope('softmax_linear'):
-            
-        V0 = tf.Variable(tf.truncated_normal([self.in_dim, 10000]))
-        b0 = tf.Variable(tf.truncated_normal([10000]))
+        #datatype as float16 to reduce RAM requirement and granularity in values regularize tensor
+        V0 = tf.Variable(tf.truncated_normal([self.in_dim, 100]),
+                         caching_device='/job:localhost/replica:0/task:0/device:GPU:0')
+        b0 = tf.Variable(tf.truncated_normal([100]))
         l0 = tf.sigmoid(tf.matmul(tensor, V0) + b0)
 
-        V1 = tf.Variable(tf.truncated_normal([10000, 1000]))
+        V1 = tf.Variable(tf.truncated_normal([100, 1000]))
         b1 = tf.Variable(tf.truncated_normal([1000]))
         l1 = tf.sigmoid(tf.matmul(l0, V1) + b1)
 
-        V2 = tf.Variable(tf.truncated_normal([1000, 600]))
-        b2 = tf.Variable(tf.truncated_normal([600]))
+        V2 = tf.Variable(tf.truncated_normal([1000, 10000]))
+        b2 = tf.Variable(tf.truncated_normal([10000]))
         l2 = tf.sigmoid(tf.matmul(l1, V2) + b2)
 
-        V3 = tf.Variable(tf.truncated_normal([600, 500]))
-        b3 = tf.Variable(tf.truncated_normal([500]))
+        V3 = tf.Variable(tf.truncated_normal([10000, 10000]))
+        b3 = tf.Variable(tf.truncated_normal([10000]))
         l3 = tf.sigmoid(tf.matmul(l2, V3) + b3)
 
-        V4 = tf.Variable(tf.truncated_normal([500, 300]))
-        b4 = tf.Variable(tf.truncated_normal([300]))
+        V4 = tf.Variable(tf.truncated_normal([10000, 10000]))
+        b4 = tf.Variable(tf.truncated_normal([10000]))
         l4 = tf.sigmoid(tf.matmul(l3, V4) + b4)
         
-        V5 = tf.Variable(tf.truncated_normal([300, 100]))
-        b5 = tf.Variable(tf.truncated_normal([100]))
+        V5 = tf.Variable(tf.truncated_normal([10000, 10000]))
+        b5 = tf.Variable(tf.truncated_normal([10000]))
         l5 = tf.sigmoid(tf.matmul(l4, V5) + b5)
 
-        V6 = tf.Variable(tf.truncated_normal([100, 25]))
-        b6 = tf.Variable(tf.truncated_normal([25]))
+        V6 = tf.Variable(tf.truncated_normal([10000, 100]))
+        b6 = tf.Variable(tf.truncated_normal([100]))
         l6 = tf.sigmoid(tf.matmul(l5, V6) + b6)
         
-        weights = tf.Variable( tf.zeros([25, self.out_dim]),name='weights')
+        weights = tf.Variable( tf.zeros([100, self.out_dim]),name='weights')
         biases = tf.Variable(tf.zeros([self.out_dim]),name='biases')
 
         logits = tf.nn.softmax(tf.matmul(l6, weights) + biases)
